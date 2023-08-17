@@ -1,0 +1,7 @@
+[
+  {
+    "eventType": "CALL_ELEVATOR",
+    "fromFloor": 5,
+    "elevatorType": "PUBLIC"
+  }
+]
