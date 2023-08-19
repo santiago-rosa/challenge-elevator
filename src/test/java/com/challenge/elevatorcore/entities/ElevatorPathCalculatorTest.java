@@ -32,7 +32,7 @@ public class ElevatorPathCalculatorTest {
                         .elevatorType(PUBLIC)
                         .eventType(CALL_ELEVATOR)
                         .fromFloor(8)
-                        .accessKey("er4r5t6")
+                        .accessKey(7)
                         .build()
         );
 
@@ -56,19 +56,19 @@ public class ElevatorPathCalculatorTest {
                         .elevatorType(PUBLIC)
                         .eventType(CALL_ELEVATOR)
                         .fromFloor(8)
-                        .accessKey("er4r5t6")
+                        .accessKey(7)
                         .build(),
                 ElevatorEvent.builder()
                         .elevatorType(PUBLIC)
                         .eventType(CALL_ELEVATOR)
                         .fromFloor(4)
-                        .accessKey("er4r5t6")
+                        .accessKey(7)
                         .build(),
                 ElevatorEvent.builder()
                         .elevatorType(PUBLIC)
                         .eventType(CALL_ELEVATOR)
                         .fromFloor(7)
-                        .accessKey("er4r5t6")
+                        .accessKey(7)
                         .build()
         );
 

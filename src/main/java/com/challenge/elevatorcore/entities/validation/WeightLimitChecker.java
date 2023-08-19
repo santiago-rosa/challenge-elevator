@@ -1,7 +1,6 @@
 package com.challenge.elevatorcore.entities.validation;
 
 import com.challenge.elevatorcore.entities.elevator.ElevatorLock;
-import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 

@@ -5,7 +5,6 @@ import com.challenge.elevatorcore.dtos.ElevatorStatus;
 import com.challenge.elevatorcore.entities.ElevatorPathCalculator;
 import com.challenge.elevatorcore.entities.validation.WeightLimitChecker;
 import com.challenge.elevatorcore.gateways.ElevatorEventSource;
-import com.challenge.elevatorcore.gateways.InMemoryEventSourceQueue;
 import lombok.Getter;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -18,12 +17,12 @@ import java.util.List;
 @Getter
 public abstract class BaseElevator {
 
-    private final ElevatorEventSource elevatorEventSource; //= new InMemoryEventSourceQueue(); //TODO inject
+    private final ElevatorEventSource elevatorEventSource;
     private int currentPosition = 0;
     private BigDecimal currentWeight = new BigDecimal(0);
     private ElevatorLock lock = new ElevatorLock(false, "");
     private List<Integer> currentPath = Collections.emptyList();
-    private String type;
+    private final String type;
 
     public BaseElevator(ElevatorEventSource elevatorEventSource, String type) {
         this.elevatorEventSource = elevatorEventSource;
@@ -76,11 +75,6 @@ public abstract class BaseElevator {
         LocalDateTime currentTimestamp = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
         return currentTimestamp.format(formatter);
-    }
-
-
-    protected void setType(String type) {
-        this.type = type;
     }
 
     protected abstract WeightLimitChecker getWeightLimitChecker();
