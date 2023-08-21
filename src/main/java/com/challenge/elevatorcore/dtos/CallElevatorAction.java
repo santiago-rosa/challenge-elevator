@@ -1,20 +1,18 @@
 package com.challenge.elevatorcore.dtos;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
-
-import java.util.List;
+import lombok.Setter;
 
 @Getter
-public class ElevatorActionDTO {
+@Builder
+public class CallElevatorAction {
 
     @NotNull
-    public String eventType;
-    @NotNull
     public String elevatorType;
-    public List<Integer> toFloors;
+    @NotNull
     public Integer fromFloor;
-    public Integer accessKey;
 
 }
 

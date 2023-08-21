@@ -26,6 +26,7 @@ public class KeyAccessFilterImpl implements KeyAccessFilter {
 
     @Override
     public List<ElevatorEvent> filter(List<ElevatorEvent> events) {
+        //TODO usar adminAccessFloors
         events = new ArrayList<>(events);
         Optional<ElevatorEvent> optionalEvent = filterToFloor(events);
         if(optionalEvent.isPresent()) {
@@ -35,6 +36,7 @@ public class KeyAccessFilterImpl implements KeyAccessFilter {
                 ElevatorUser user = found.get();
                 if(!user.isAdmin()){
                     events.remove(event);
+                    System.out.println("Access key number " + event.getAccessKey() + " is not authorized" );
                 }
             }
         }

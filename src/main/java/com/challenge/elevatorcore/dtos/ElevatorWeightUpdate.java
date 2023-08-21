@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.math.BigDecimal;
 
 @Getter
-public class ElevatorSensorUpdate {
+public class ElevatorWeightUpdate {
 
     @NotNull
     public BigDecimal measure;

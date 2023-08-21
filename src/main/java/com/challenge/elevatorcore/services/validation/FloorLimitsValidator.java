@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class FloorLimitsValidator implements ElevatorEventValidator {
@@ -25,7 +26,8 @@ public class FloorLimitsValidator implements ElevatorEventValidator {
     public ValidationResult execute(List<ElevatorEvent> events) {
         List<Integer> floors = new ArrayList<>();
         events.forEach(event -> {
-            floors.add(event.getFromFloor());
+            Optional.ofNullable(event.getFromFloor()).ifPresent(floors::add);
+            Optional.ofNullable(event.getToFloors()).ifPresent(floors::addAll);
         });
         if (floors.stream().anyMatch(floor -> (maxFloor < floor) || (floor < minFloor))) {
             return new ValidationResult("Some floors are out of bounds", true);

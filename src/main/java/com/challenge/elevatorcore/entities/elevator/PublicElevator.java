@@ -4,7 +4,7 @@ import com.challenge.elevatorcore.dtos.ElevatorEvent;
 import com.challenge.elevatorcore.dtos.ElevatorType;
 import com.challenge.elevatorcore.entities.keyaccess.KeyAccessFilter;
 import com.challenge.elevatorcore.entities.validation.WeightLimitChecker;
-import com.challenge.elevatorcore.gateways.ElevatorEventSource;
+import com.challenge.elevatorcore.gateways.events.ElevatorEventSourceGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -21,8 +21,8 @@ public class PublicElevator extends BaseElevator implements Elevator {
     @Autowired
     public PublicElevator(@Qualifier("publicElevatorWeightLimitChecker") WeightLimitChecker weightLimitChecker,
                           KeyAccessFilter keyAccessFilter,
-                          ElevatorEventSource elevatorEventSource) {
-        super(elevatorEventSource, PUBLIC.toString());
+                          ElevatorEventSourceGateway eventSourceGateway) {
+        super(eventSourceGateway, PUBLIC.toString());
         this.weightLimitChecker = weightLimitChecker;
         this.keyAccessFilter = keyAccessFilter;
     }

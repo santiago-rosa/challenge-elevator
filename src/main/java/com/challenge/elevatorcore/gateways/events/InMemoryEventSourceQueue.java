@@ -1,18 +1,18 @@
-package com.challenge.elevatorcore.gateways;
+package com.challenge.elevatorcore.gateways.events;
 
 import com.challenge.elevatorcore.dtos.ElevatorEvent;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-@Component
-@Scope("prototype")
-public class InMemoryEventSourceQueue implements ElevatorEventSource {
+public class InMemoryEventSourceQueue implements ElevatorEventSourceGateway {
 
-    private final ConcurrentLinkedQueue<ElevatorEvent> eventQueue = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<ElevatorEvent> eventQueue;
+
+    public InMemoryEventSourceQueue(ConcurrentLinkedQueue<ElevatorEvent> eventQueue) {
+        this.eventQueue = eventQueue;
+    }
 
     @Override
     public void pushEvents(List<ElevatorEvent> events) {

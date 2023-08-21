@@ -1,18 +1,19 @@
 package com.challenge.elevatorcore.configuration;
 
 import com.challenge.elevatorcore.entities.validation.WeightLimitChecker;
+import com.challenge.elevatorcore.gateways.events.ElevatorEventSourceGateway;
+import com.challenge.elevatorcore.gateways.events.InMemoryEventSourceQueue;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 
 import java.math.BigDecimal;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Configuration
 public class ElevatorConfiguration {
-
-    /*@Value("#{'${building.adminAccessFloors}'.replaceAll('[\\[\\]]', '').split(',')}")
-    private List<Integer> adminAccessFloors;*/
 
     @Value("${freight.elevator.weight.limit}")
     private String freightElevatorWeightLimit;
@@ -32,17 +33,10 @@ public class ElevatorConfiguration {
         return new WeightLimitChecker(new BigDecimal(publicElevatorWeightLimit));
     }
 
-    /*@Bean(name = "publicElevator")
-    public PublicElevator publicElevator() {
-        return new PublicElevator(
-                publicElevatorWeightLimitChecker(),
-                keyAccessFilter());
+    @Bean
+    @Scope("prototype")
+    public ElevatorEventSourceGateway eventSourceGateway() {
+        return new InMemoryEventSourceQueue(new ConcurrentLinkedQueue<>());
     }
-
-    @Bean(name = "freightElevator")
-    public FreightElevator freightElevator() {
-        return new FreightElevator(
-                freightElevatorWeightLimitChecker());
-    }*/
 
 }

@@ -3,7 +3,7 @@ package com.challenge.elevatorcore.entities.elevator;
 import com.challenge.elevatorcore.dtos.ElevatorEvent;
 import com.challenge.elevatorcore.dtos.ElevatorType;
 import com.challenge.elevatorcore.entities.validation.WeightLimitChecker;
-import com.challenge.elevatorcore.gateways.ElevatorEventSource;
+import com.challenge.elevatorcore.gateways.events.ElevatorEventSourceGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,7 @@ public class FreightElevator extends BaseElevator implements Elevator {
 
     @Autowired
     public FreightElevator(@Qualifier("freightElevatorWeightLimitChecker") WeightLimitChecker weightLimitChecker,
-                           ElevatorEventSource elevatorEventSource) {
+                           ElevatorEventSourceGateway elevatorEventSource) {
         super(elevatorEventSource, FREIGHT.toString());
         this.weightLimitChecker = weightLimitChecker;
     }

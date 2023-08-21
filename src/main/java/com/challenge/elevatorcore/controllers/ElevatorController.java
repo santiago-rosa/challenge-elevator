@@ -11,65 +11,46 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/elevator")
 public class ElevatorController {
 
     private final ElevatorService elevatorService;
+    private final ElevatorEventMapper eventMapper;
 
     @Autowired
-    public ElevatorController(ElevatorService elevatorService) {
+    public ElevatorController(ElevatorService elevatorService, ElevatorEventMapper eventMapper) {
         this.elevatorService = elevatorService;
+        this.eventMapper = eventMapper;
     }
 
-    @PostMapping("/actions")
-    public ResponseEntity<String> processActions(@RequestBody @Valid List<ElevatorActionDTO> actions) {
-        List<ElevatorEvent> events = actions.stream()
-                .map(this::mapToEvent)
-                .collect(Collectors.toList());
+    @PostMapping("/calls")
+    public ResponseEntity<String> processActions(@RequestBody @Valid List<CallElevatorAction> actions) {
+        return getResponse(eventMapper.mapCallEventList(actions));
+    }
+
+    @PostMapping("/select_floors")
+    public ResponseEntity<String> processSelectFloors(@RequestBody @Valid SelectFloorsAction action) {
+        return getResponse(Collections.singletonList(eventMapper.mapSelectFloor(action)));
+    }
+
+    @PostMapping("/weight")
+    public ResponseEntity<Void> updateMeasures(@RequestBody @Valid ElevatorWeightUpdate action) {
+        elevatorService.updateWeight(eventMapper.mapToWeightEvent(action));
+        return ResponseEntity.ok().build();
+    }
+
+    private ResponseEntity<String> getResponse(List<ElevatorEvent> events) {
         try {
             elevatorService.receiveEvents(events);
-        } catch (ElevatorServiceException e) {
+        } catch (ElevatorServiceException | IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/weight")
-    public ResponseEntity<Void> updateMeasures(@RequestBody @Valid ElevatorSensorUpdate action) {
-        elevatorService.updateWeight(mapToSensorEvent(action));
-        return ResponseEntity.ok().build();
-    }
-
-    //TODO move to a mapper
-    private ElevatorWeightEvent mapToSensorEvent(ElevatorSensorUpdate update) {
-        return ElevatorWeightEvent.builder()
-                .weight(update.getMeasure())
-                .elevatorType(ElevatorType.valueOf(update.getElevatorType()))
-                .build();
-    }
-
-    //TODO move to a mapper
-    private ElevatorEvent mapToEvent(ElevatorActionDTO action) {
-        return switch (action.getEventType()) {
-            case "CALL_ELEVATOR" -> ElevatorEvent.builder()
-                    .elevatorType(ElevatorType.valueOf(action.getElevatorType()))
-                    .eventType(ElevatorEventType.valueOf(action.getEventType()))
-                    .fromFloor(action.getFromFloor())
-                    .accessKey(action.getAccessKey())
-                    .build();
-            case "SELECT_FLOORS" -> ElevatorEvent.builder()
-                    .elevatorType(ElevatorType.valueOf(action.getElevatorType()))
-                    .eventType(ElevatorEventType.valueOf(action.getEventType()))
-                    .fromFloor(action.getFromFloor())
-                    .toFloors(action.getToFloors())
-                    .accessKey(action.getAccessKey())
-                    .build();
-            default -> throw new IllegalArgumentException("Unsupported event type: " + action.getEventType());
-        };
-    }
 }
 

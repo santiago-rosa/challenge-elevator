@@ -1,30 +1,33 @@
 package com.challenge.elevatorcore.entities.elevator;
 
 import com.challenge.elevatorcore.dtos.ElevatorEvent;
+import com.challenge.elevatorcore.dtos.ElevatorEventType;
+import com.challenge.elevatorcore.dtos.ElevatorLock;
 import com.challenge.elevatorcore.dtos.ElevatorStatus;
-import com.challenge.elevatorcore.entities.ElevatorPathCalculator;
 import com.challenge.elevatorcore.entities.validation.WeightLimitChecker;
-import com.challenge.elevatorcore.gateways.ElevatorEventSource;
+import com.challenge.elevatorcore.gateways.events.ElevatorEventSourceGateway;
 import lombok.Getter;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 public abstract class BaseElevator {
 
-    private final ElevatorEventSource elevatorEventSource;
+    private final ElevatorEventSourceGateway elevatorEventSource;
     private int currentPosition = 0;
     private BigDecimal currentWeight = new BigDecimal(0);
     private ElevatorLock lock = new ElevatorLock(false, "");
     private List<Integer> currentPath = Collections.emptyList();
     private final String type;
 
-    public BaseElevator(ElevatorEventSource elevatorEventSource, String type) {
+    public BaseElevator(ElevatorEventSourceGateway elevatorEventSource, String type) {
         this.elevatorEventSource = elevatorEventSource;
         this.type = type;
     }
@@ -53,7 +56,7 @@ public abstract class BaseElevator {
     }
 
     private static void work() throws InterruptedException {
-        Thread.sleep(1000);
+        Thread.sleep(500);
     }
 
     public void processEvents(List<ElevatorEvent> events) {
@@ -68,7 +71,23 @@ public abstract class BaseElevator {
     }
 
     private void updateCurrentPath() {
-        currentPath = ElevatorPathCalculator.calculateOptimalPath(elevatorEventSource.fetchAllEvents(), elevatorStatus());
+        List<Integer> newFloors = getNewFloors(elevatorEventSource.fetchAllEvents());
+        currentPath = ElevatorPathCalculator.calculateOptimalPath(newFloors, elevatorStatus());
+    }
+
+    private static List<Integer> getNewFloors(List<ElevatorEvent> events) {
+        List<ElevatorEvent> callEvents = events.stream()
+                .filter(it -> ElevatorEventType.CALL_ELEVATOR.equals(it.getEventType()))
+                .toList();
+
+        Optional<ElevatorEvent> toFloorEvent = events.stream()
+                .filter(it -> ElevatorEventType.SELECT_FLOORS.equals(it.getEventType()))
+                .findFirst();
+
+        List<Integer> newFloors = new ArrayList<>(callEvents.stream().map(ElevatorEvent::getFromFloor).toList());
+
+        toFloorEvent.ifPresent(elevatorEvent -> newFloors.addAll(elevatorEvent.getToFloors()));
+        return newFloors;
     }
 
     private String timestamp() {
@@ -79,7 +98,7 @@ public abstract class BaseElevator {
 
     protected abstract WeightLimitChecker getWeightLimitChecker();
 
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 3000)
     void scheduledMove() {
         lock = (getWeightLimitChecker().overweightLock(currentWeight));
         move();

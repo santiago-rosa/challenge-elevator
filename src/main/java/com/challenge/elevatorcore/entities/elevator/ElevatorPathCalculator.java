@@ -1,7 +1,5 @@
-package com.challenge.elevatorcore.entities;
+package com.challenge.elevatorcore.entities.elevator;
 
-import com.challenge.elevatorcore.dtos.ElevatorEvent;
-import com.challenge.elevatorcore.dtos.ElevatorEventType;
 import com.challenge.elevatorcore.dtos.ElevatorStatus;
 
 import java.util.*;
@@ -11,21 +9,11 @@ public class ElevatorPathCalculator {
 
     //TODO this class could implement an interface, so we could have different strategies
 
-    public static List<Integer> calculateOptimalPath(List<ElevatorEvent> events, ElevatorStatus report) {
-        if (events.isEmpty()) return report.currentPath;
+    public static List<Integer> calculateOptimalPath(List<Integer> newFloors, ElevatorStatus report) {
+
+        if (newFloors.isEmpty()) return report.currentPath;
         Integer currentPosition = report.currentPosition;
         List<Integer> currentPath = report.currentPath;
-        List<ElevatorEvent> callEvents = events.stream()
-                .filter(it -> ElevatorEventType.CALL_ELEVATOR.equals(it.getEventType()))
-                .toList();
-
-        Optional<ElevatorEvent> toFloorEvent = events.stream()
-                .filter(it -> ElevatorEventType.SELECT_FLOORS.equals(it.getEventType()))
-                .findFirst();
-
-        List<Integer> newFloors = new ArrayList<>(callEvents.stream().map(ElevatorEvent::getFromFloor).toList());
-
-        toFloorEvent.ifPresent(elevatorEvent -> newFloors.addAll(elevatorEvent.getToFloors()));
 
         int elevatorDirection = currentPath.isEmpty() ? 0 : currentPosition.compareTo(currentPath.get(0)); // -1 is up, 0 is idle, 1 is down
 
@@ -51,6 +39,7 @@ public class ElevatorPathCalculator {
 
         return new ArrayList<>(output);
     }
+
 
     private static void movingDownStrategy(Set<Integer> newPath, Integer currentPosition, List<Integer> output) {
         List<Integer> ordered = desc(new ArrayList<>(newPath));

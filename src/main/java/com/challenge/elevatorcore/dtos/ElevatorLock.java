@@ -1,4 +1,4 @@
-package com.challenge.elevatorcore.entities.elevator;
+package com.challenge.elevatorcore.dtos;
 
 public class ElevatorLock {
 
