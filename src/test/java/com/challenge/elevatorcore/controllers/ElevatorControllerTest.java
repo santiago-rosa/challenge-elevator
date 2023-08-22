@@ -2,7 +2,7 @@ package com.challenge.elevatorcore.controllers;
 
 import com.challenge.elevatorcore.ElevatorApplication;
 import com.challenge.elevatorcore.dtos.CallElevatorAction;
-import com.challenge.elevatorcore.dtos.ElevatorEvent;
+import com.challenge.elevatorcore.dtos.CallEvent;
 import com.challenge.elevatorcore.services.ElevatorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,7 +40,7 @@ class ElevatorControllerTest {
     public void post_events() throws Exception {
 
         when(eventMapper.mapCallEventList(anyList()))
-                .thenReturn(Collections.singletonList(ElevatorEvent.builder().build()));
+                .thenReturn(Collections.singletonList(CallEvent.builder().build()));
 
         List<CallElevatorAction> actionList = Collections.singletonList(CallElevatorAction.builder()
                 .elevatorType("")
@@ -53,7 +52,7 @@ class ElevatorControllerTest {
                         .content(new ObjectMapper().writeValueAsString(actionList)))
                 .andExpect(status().isOk());
 
-        verify(elevatorService, times(1)).receiveEvents(anyList());
+        verify(elevatorService, times(1)).receiveCalls(anyList());
         verify(eventMapper, times(1)).mapCallEventList(any());
 
     }

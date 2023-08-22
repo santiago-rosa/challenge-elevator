@@ -1,13 +1,11 @@
 package com.challenge.elevatorcore.gateways.events;
 
-import com.challenge.elevatorcore.dtos.ElevatorEvent;
-
 import java.util.List;
 
 public interface ElevatorEventSourceGateway {
 
-    void pushEvents(List<ElevatorEvent> events);
+    void pushEvents(List<Integer> events);
 
-    List<ElevatorEvent> fetchAllEvents();
+    List<Integer> fetchAllEvents();
 
 }

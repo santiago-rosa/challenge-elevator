@@ -1,27 +1,25 @@
 package com.challenge.elevatorcore.gateways.events;
 
-import com.challenge.elevatorcore.dtos.ElevatorEvent;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class InMemoryEventSourceQueue implements ElevatorEventSourceGateway {
 
-    private final ConcurrentLinkedQueue<ElevatorEvent> eventQueue;
+    private final ConcurrentLinkedQueue<Integer> eventQueue;
 
-    public InMemoryEventSourceQueue(ConcurrentLinkedQueue<ElevatorEvent> eventQueue) {
+    public InMemoryEventSourceQueue(ConcurrentLinkedQueue<Integer> eventQueue) {
         this.eventQueue = eventQueue;
     }
 
     @Override
-    public void pushEvents(List<ElevatorEvent> events) {
+    public void pushEvents(List<Integer> events) {
         eventQueue.addAll(events);
     }
 
     @Override
-    public List<ElevatorEvent> fetchAllEvents() {
-        List<ElevatorEvent> allEvents = new ArrayList<>();
+    public List<Integer> fetchAllEvents() {
+        List<Integer> allEvents = new ArrayList<>();
         while (!eventQueue.isEmpty()) {
             allEvents.add(eventQueue.poll());
         }

@@ -11,7 +11,7 @@ public class ElevatorUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(name = "admin", columnDefinition = "false by default")
+    @Column(name = "admin", columnDefinition = "boolean default false")
     private boolean isAdmin;
 
     public boolean isAdmin() {

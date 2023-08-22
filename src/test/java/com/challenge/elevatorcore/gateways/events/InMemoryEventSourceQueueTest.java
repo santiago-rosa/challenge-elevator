@@ -1,8 +1,8 @@
 package com.challenge.elevatorcore.gateways.events;
 
-import com.challenge.elevatorcore.dtos.ElevatorEvent;
+import com.challenge.elevatorcore.dtos.CallEvent;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 
@@ -17,15 +18,19 @@ import static org.mockito.Mockito.*;
 class InMemoryEventSourceQueueTest {
 
     @Mock
-    ConcurrentLinkedQueue<ElevatorEvent> eventQueue;
+    ConcurrentLinkedQueue<Integer> eventQueue;
 
-    @InjectMocks
-    private ElevatorEventSourceGateway userGateway = new InMemoryEventSourceQueue(eventQueue);
+    private ElevatorEventSourceGateway userGateway;
+
+    @BeforeEach
+    void setUp() {
+        userGateway = new InMemoryEventSourceQueue(eventQueue);
+    }
 
     @Test
     public void pushEvents() {
         //Given
-        List<ElevatorEvent> events = Collections.singletonList(ElevatorEvent.builder().build());
+        List<Integer> events = Collections.singletonList(1);
 
         //When
         userGateway.pushEvents(events);
@@ -38,13 +43,14 @@ class InMemoryEventSourceQueueTest {
     public void fetchAllEvents() {
         //Given
         when(eventQueue.isEmpty()).thenReturn(false, false, false, true);
-        when(eventQueue.poll()).thenReturn(ElevatorEvent.builder().build());
+        when(eventQueue.poll()).thenReturn(1, 2, 3);
 
         //When
-        List<ElevatorEvent> events = userGateway.fetchAllEvents();
+        List<Integer> events = userGateway.fetchAllEvents();
 
         //Then
-        verify(eventQueue, times(3)).addAll(events);
+        verify(eventQueue, times(3)).poll();
+        assertEquals(events.size(), 3);
 
     }
 }

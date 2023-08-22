@@ -1,6 +1,6 @@
 package com.challenge.elevatorcore.entities.elevator;
 
-import com.challenge.elevatorcore.dtos.ElevatorEvent;
+import com.challenge.elevatorcore.dtos.CallEvent;
 import com.challenge.elevatorcore.dtos.ElevatorEventType;
 import com.challenge.elevatorcore.dtos.ElevatorLock;
 import com.challenge.elevatorcore.dtos.ElevatorType;
@@ -95,12 +95,7 @@ class FreightElevatorTest {
     @Test
     void testMoveToTargetFloor() {
         // Given
-        List<ElevatorEvent> mockEvents = List.of(ElevatorEvent.builder()
-                .eventType(ElevatorEventType.CALL_ELEVATOR)
-                .elevatorType(ElevatorType.PUBLIC)
-                .fromFloor(5)
-                .build());
-        when(elevatorEventSource.fetchAllEvents()).thenReturn(mockEvents);
+        when(elevatorEventSource.fetchAllEvents()).thenReturn(List.of(5));
         when(weightLimitChecker.overweightLock(any())).thenReturn(new ElevatorLock(false, ""));
 
         // When

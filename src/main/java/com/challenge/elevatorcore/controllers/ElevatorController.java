@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -29,27 +28,36 @@ public class ElevatorController {
 
     @PostMapping("/calls")
     public ResponseEntity<String> processActions(@RequestBody @Valid List<CallElevatorAction> actions) {
-        return getResponse(eventMapper.mapCallEventList(actions));
+        try {
+            elevatorService.receiveCalls(eventMapper.mapCallEventList(actions));
+        } catch (ElevatorServiceException e) {
+            return badRequest(e);
+        }
+        return ok();
     }
 
     @PostMapping("/select_floors")
     public ResponseEntity<String> processSelectFloors(@RequestBody @Valid SelectFloorsAction action) {
-        return getResponse(Collections.singletonList(eventMapper.mapSelectFloor(action)));
+        try {
+            elevatorService.goToFloors(eventMapper.mapSelectFloor(action));
+        } catch (ElevatorServiceException e) {
+            return badRequest(e);
+        }
+        return ok();
     }
 
     @PostMapping("/weight")
-    public ResponseEntity<Void> updateMeasures(@RequestBody @Valid ElevatorWeightUpdate action) {
+    public ResponseEntity<String> updateMeasures(@RequestBody @Valid ElevatorWeightUpdate action) {
         elevatorService.updateWeight(eventMapper.mapToWeightEvent(action));
+        return ok();
+    }
+
+    private static ResponseEntity<String> ok() {
         return ResponseEntity.ok().build();
     }
 
-    private ResponseEntity<String> getResponse(List<ElevatorEvent> events) {
-        try {
-            elevatorService.receiveEvents(events);
-        } catch (ElevatorServiceException | IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-        return ResponseEntity.ok().build();
+    private static ResponseEntity<String> badRequest(ElevatorServiceException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 
 }

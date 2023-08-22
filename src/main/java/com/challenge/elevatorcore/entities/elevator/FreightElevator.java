@@ -1,7 +1,8 @@
 package com.challenge.elevatorcore.entities.elevator;
 
-import com.challenge.elevatorcore.dtos.ElevatorEvent;
+import com.challenge.elevatorcore.dtos.CallEvent;
 import com.challenge.elevatorcore.dtos.ElevatorType;
+import com.challenge.elevatorcore.dtos.ToFloorEvent;
 import com.challenge.elevatorcore.entities.validation.WeightLimitChecker;
 import com.challenge.elevatorcore.gateways.events.ElevatorEventSourceGateway;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +25,18 @@ public class FreightElevator extends BaseElevator implements Elevator {
     }
 
     @Override
-    public void processEvents(List<ElevatorEvent> events) {
-        super.processEvents(events);
+    protected WeightLimitChecker getWeightLimitChecker() {
+        return this.weightLimitChecker;
     }
 
     @Override
-    protected WeightLimitChecker getWeightLimitChecker() {
-        return this.weightLimitChecker;
+    public void processCalls(List<CallEvent> events) {
+        super.processEvents(events.stream().map(CallEvent::getFromFloor).toList());
+    }
+
+    @Override
+    public void processToFloor(ToFloorEvent event) {
+        super.processEvents(event.getToFloors());
     }
 
     @Override

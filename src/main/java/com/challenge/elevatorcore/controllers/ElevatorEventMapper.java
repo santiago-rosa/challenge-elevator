@@ -8,18 +8,16 @@ import java.util.List;
 @Component
 public class ElevatorEventMapper {
 
-    public List<ElevatorEvent> mapCallEventList(List<CallElevatorAction> actionList) {
-        return actionList.stream().map(action -> ElevatorEvent.builder()
+    public List<CallEvent> mapCallEventList(List<CallElevatorAction> actionList) {
+        return actionList.stream().map(action -> CallEvent.builder()
                 .elevatorType(ElevatorType.valueOf(action.getElevatorType()))
-                .eventType((ElevatorEventType.CALL_ELEVATOR))
                 .fromFloor(action.getFromFloor())
                 .build()).toList();
     }
 
-    public ElevatorEvent mapSelectFloor(SelectFloorsAction action) {
-        return ElevatorEvent.builder()
+    public ToFloorEvent mapSelectFloor(SelectFloorsAction action) {
+        return ToFloorEvent.builder()
                 .elevatorType(ElevatorType.valueOf(action.getElevatorType()))
-                .eventType((ElevatorEventType.SELECT_FLOORS))
                 .toFloors(action.getToFloors())
                 .accessKey(action.getAccessKey())
                 .build();

@@ -1,7 +1,5 @@
 package com.challenge.elevatorcore.entities.elevator;
 
-import com.challenge.elevatorcore.dtos.ElevatorEvent;
-import com.challenge.elevatorcore.dtos.ElevatorEventType;
 import com.challenge.elevatorcore.dtos.ElevatorLock;
 import com.challenge.elevatorcore.dtos.ElevatorStatus;
 import com.challenge.elevatorcore.entities.validation.WeightLimitChecker;
@@ -12,10 +10,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Getter
 public abstract class BaseElevator {
@@ -56,10 +52,11 @@ public abstract class BaseElevator {
     }
 
     private static void work() throws InterruptedException {
+        //This simulates the time that the elevator takes to move
         Thread.sleep(500);
     }
 
-    public void processEvents(List<ElevatorEvent> events) {
+    public void processEvents(List<Integer> events) {
         elevatorEventSource.pushEvents(events);
     }
 
@@ -71,23 +68,7 @@ public abstract class BaseElevator {
     }
 
     private void updateCurrentPath() {
-        List<Integer> newFloors = getNewFloors(elevatorEventSource.fetchAllEvents());
-        currentPath = ElevatorPathCalculator.calculateOptimalPath(newFloors, elevatorStatus());
-    }
-
-    private static List<Integer> getNewFloors(List<ElevatorEvent> events) {
-        List<ElevatorEvent> callEvents = events.stream()
-                .filter(it -> ElevatorEventType.CALL_ELEVATOR.equals(it.getEventType()))
-                .toList();
-
-        Optional<ElevatorEvent> toFloorEvent = events.stream()
-                .filter(it -> ElevatorEventType.SELECT_FLOORS.equals(it.getEventType()))
-                .findFirst();
-
-        List<Integer> newFloors = new ArrayList<>(callEvents.stream().map(ElevatorEvent::getFromFloor).toList());
-
-        toFloorEvent.ifPresent(elevatorEvent -> newFloors.addAll(elevatorEvent.getToFloors()));
-        return newFloors;
+        currentPath = ElevatorPathCalculator.calculateOptimalPath(elevatorEventSource.fetchAllEvents(), elevatorStatus());
     }
 
     private String timestamp() {

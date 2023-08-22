@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ElevatorEventMapperTest {
+class CallEventMapperTest {
 
     private ElevatorEventMapper mapper;
 
@@ -26,12 +26,11 @@ class ElevatorEventMapperTest {
                 .fromFloor(5)
                 .build();
 
-        List<ElevatorEvent> events = mapper.mapCallEventList(Collections.singletonList(action));
+        List<CallEvent> events = mapper.mapCallEventList(Collections.singletonList(action));
 
         assertNotNull(events);
         assertEquals(1, events.size());
         assertEquals(ElevatorType.PUBLIC, events.get(0).getElevatorType());
-        assertEquals(ElevatorEventType.CALL_ELEVATOR, events.get(0).getEventType());
         assertEquals(5, events.get(0).getFromFloor());
     }
 
@@ -44,11 +43,10 @@ class ElevatorEventMapperTest {
                 .build();
 
 
-        ElevatorEvent event = mapper.mapSelectFloor(action);
+        ToFloorEvent event = mapper.mapSelectFloor(action);
 
         assertNotNull(event);
         assertEquals(ElevatorType.FREIGHT, event.getElevatorType());
-        assertEquals(ElevatorEventType.SELECT_FLOORS, event.getEventType());
         assertEquals(Arrays.asList(1, 2), event.getToFloors());
         assertEquals(1234, event.getAccessKey());
     }

@@ -1,10 +1,7 @@
 package com.challenge.elevatorcore.entities.elevator;
 
-import com.challenge.elevatorcore.dtos.ElevatorEvent;
-import com.challenge.elevatorcore.dtos.ElevatorEventType;
-import com.challenge.elevatorcore.dtos.ElevatorLock;
-import com.challenge.elevatorcore.dtos.ElevatorType;
-import com.challenge.elevatorcore.entities.keyaccess.KeyAccessFilter;
+import com.challenge.elevatorcore.dtos.*;
+import com.challenge.elevatorcore.entities.keyaccess.KeyAccessAuthorizer;
 import com.challenge.elevatorcore.entities.validation.WeightLimitChecker;
 import com.challenge.elevatorcore.gateways.events.ElevatorEventSourceGateway;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +23,7 @@ class PublicElevatorTest {
     private WeightLimitChecker weightLimitChecker;
 
     @Mock
-    private KeyAccessFilter keyAccessFilter;
+    private KeyAccessAuthorizer keyAccessAuthorizer;
 
     @Mock
     private ElevatorEventSourceGateway elevatorEventSource;
@@ -35,20 +32,32 @@ class PublicElevatorTest {
 
     @BeforeEach
     void setUp() {
-        elevator = new PublicElevator(weightLimitChecker, keyAccessFilter, elevatorEventSource);
+        elevator = new PublicElevator(weightLimitChecker, keyAccessAuthorizer, elevatorEventSource);
     }
 
     @Test
     void testProcessEvents() {
-        List<ElevatorEvent> events = List.of(mock(ElevatorEvent.class));
-        List<ElevatorEvent> filteredEvents = List.of(mock(ElevatorEvent.class));
+        //Given
+        List<CallEvent> events = List.of(CallEvent.builder().fromFloor(5).build());
+        List<CallEvent> filteredEvents = List.of(mock(CallEvent.class));
 
-        when(keyAccessFilter.filter(events)).thenReturn(filteredEvents);
+        //When
+        elevator.processCalls(events);
 
-        elevator.processEvents(events);
+        //Then
+        verify(elevatorEventSource).pushEvents(List.of(5));
+    }
 
-        verify(keyAccessFilter).filter(events);
-        verify(elevatorEventSource).pushEvents(filteredEvents);
+    @Test
+    void testProcessToFloorAuthorized() {
+        //Given
+        ToFloorEvent event = ToFloorEvent.builder().toFloors(List.of(1, 2, 3, 4)).build();
+        when(keyAccessAuthorizer.authorized(event)).thenReturn(true);
+
+        //When
+        elevator.processToFloor(event);
+        //Then
+        verify(elevatorEventSource).pushEvents(List.of(1, 2, 3, 4));
     }
 
     @Test
@@ -112,12 +121,7 @@ class PublicElevatorTest {
     @Test
     void testMoveToTargetFloor() {
         // Given
-        List<ElevatorEvent> mockEvents = List.of(ElevatorEvent.builder()
-                .eventType(ElevatorEventType.CALL_ELEVATOR)
-                .elevatorType(ElevatorType.PUBLIC)
-                .fromFloor(5)
-                .build());
-        when(elevatorEventSource.fetchAllEvents()).thenReturn(mockEvents);
+        when(elevatorEventSource.fetchAllEvents()).thenReturn(List.of(5));
         when(weightLimitChecker.overweightLock(any())).thenReturn(new ElevatorLock(false, ""));
 
         // When

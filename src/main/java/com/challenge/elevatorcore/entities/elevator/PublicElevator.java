@@ -1,8 +1,9 @@
 package com.challenge.elevatorcore.entities.elevator;
 
-import com.challenge.elevatorcore.dtos.ElevatorEvent;
+import com.challenge.elevatorcore.dtos.CallEvent;
 import com.challenge.elevatorcore.dtos.ElevatorType;
-import com.challenge.elevatorcore.entities.keyaccess.KeyAccessFilter;
+import com.challenge.elevatorcore.dtos.ToFloorEvent;
+import com.challenge.elevatorcore.entities.keyaccess.KeyAccessAuthorizer;
 import com.challenge.elevatorcore.entities.validation.WeightLimitChecker;
 import com.challenge.elevatorcore.gateways.events.ElevatorEventSourceGateway;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,20 +17,27 @@ public class PublicElevator extends BaseElevator implements Elevator {
 
     private static final ElevatorType PUBLIC = ElevatorType.PUBLIC;
     private final WeightLimitChecker weightLimitChecker;
-    private final KeyAccessFilter keyAccessFilter;
+    private final KeyAccessAuthorizer keyAccessAuthorizer;
 
     @Autowired
     public PublicElevator(@Qualifier("publicElevatorWeightLimitChecker") WeightLimitChecker weightLimitChecker,
-                          KeyAccessFilter keyAccessFilter,
+                          KeyAccessAuthorizer keyAccessAuthorizer,
                           ElevatorEventSourceGateway eventSourceGateway) {
         super(eventSourceGateway, PUBLIC.toString());
         this.weightLimitChecker = weightLimitChecker;
-        this.keyAccessFilter = keyAccessFilter;
+        this.keyAccessAuthorizer = keyAccessAuthorizer;
     }
 
     @Override
-    public void processEvents(List<ElevatorEvent> events) {
-        super.processEvents(keyAccessFilter.filter(events));
+    public void processCalls(List<CallEvent> events) {
+        super.processEvents(events.stream().map(CallEvent::getFromFloor).toList());
+    }
+
+    @Override
+    public void processToFloor(ToFloorEvent event) {
+        if (keyAccessAuthorizer.authorized(event)) {
+            super.processEvents(event.getToFloors());
+        }
     }
 
     @Override
