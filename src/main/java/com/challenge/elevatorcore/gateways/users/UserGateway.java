@@ -1,11 +1,15 @@
 package com.challenge.elevatorcore.gateways.users;
 
-import com.challenge.elevatorcore.entities.keyaccess.users.ElevatorUser;
+import com.challenge.elevatorcore.dtos.User;
 
 import java.util.Optional;
 
 public interface UserGateway {
 
-    Optional<ElevatorUser> findById(Integer id);
+    Optional<User> findById(Integer id);
+
+    User addUser(User user);
+
+    void delete(Integer id);
 
 }

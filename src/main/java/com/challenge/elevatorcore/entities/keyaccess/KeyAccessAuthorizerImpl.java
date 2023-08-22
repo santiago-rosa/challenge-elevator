@@ -1,7 +1,7 @@
 package com.challenge.elevatorcore.entities.keyaccess;
 
 import com.challenge.elevatorcore.dtos.ToFloorEvent;
-import com.challenge.elevatorcore.entities.keyaccess.users.ElevatorUser;
+import com.challenge.elevatorcore.dtos.User;
 import com.challenge.elevatorcore.gateways.users.UserGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,10 +31,10 @@ public class KeyAccessAuthorizerImpl implements KeyAccessAuthorizer {
     }
 
     private boolean userIsAdmin(ToFloorEvent event) {
-        Optional<ElevatorUser> found = userGateway.findById(event.getAccessKey());
+        Optional<User> found = userGateway.findById(event.getAccessKey());
         if (found.isPresent()) {
-            ElevatorUser user = found.get();
-            if (!user.isAdmin()) {
+            User user = found.get();
+            if (!user.getAdmin()) {
                 System.out.println("Access key number " + event.getAccessKey() + " is not authorized");
                 return false;
             }

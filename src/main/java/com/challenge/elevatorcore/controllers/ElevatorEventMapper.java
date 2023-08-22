@@ -23,7 +23,7 @@ public class ElevatorEventMapper {
                 .build();
     }
 
-    public  ElevatorWeightEvent mapToWeightEvent(ElevatorWeightUpdate update) {
+    public  ElevatorWeightEvent mapToWeightEvent(WeightChangeAction update) {
         return ElevatorWeightEvent.builder()
                 .weight(update.getMeasure())
                 .elevatorType(ElevatorType.valueOf(update.getElevatorType()))

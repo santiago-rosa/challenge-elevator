@@ -3,6 +3,8 @@ package com.challenge.elevatorcore.controllers;
 import com.challenge.elevatorcore.dtos.*;
 import com.challenge.elevatorcore.services.ElevatorService;
 import com.challenge.elevatorcore.services.exceptions.ElevatorServiceException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +49,7 @@ public class ElevatorController {
     }
 
     @PostMapping("/weight")
-    public ResponseEntity<String> updateMeasures(@RequestBody @Valid ElevatorWeightUpdate action) {
+    public ResponseEntity<String> updateMeasures(@RequestBody @Valid WeightChangeAction action) {
         elevatorService.updateWeight(eventMapper.mapToWeightEvent(action));
         return ok();
     }

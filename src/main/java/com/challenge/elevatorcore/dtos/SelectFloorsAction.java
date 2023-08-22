@@ -10,11 +10,11 @@ import java.util.List;
 @Builder
 public class SelectFloorsAction {
 
-    @NotNull
+    @NotNull(message = "Elevator type must be provided")
     private String elevatorType;
-    @NotNull
+    @NotNull(message = "Target floors must be provided")
     private List<Integer> toFloors;
-    @NotNull
+    @NotNull(message = "Access key must be provided")
     private Integer accessKey;
 
 }

@@ -1,6 +1,9 @@
 package com.challenge.elevatorcore.gateways.users;
 
-import com.challenge.elevatorcore.entities.keyaccess.users.ElevatorUser;
+import com.challenge.elevatorcore.dtos.User;
+import com.challenge.elevatorcore.entities.elevator.PublicElevator;
+import com.challenge.elevatorcore.entities.keyaccess.users.DbUser;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -9,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 
@@ -18,32 +22,31 @@ class UserGatewayInMemoryDbTest {
     @Mock
     private UserRepository userRepository;
 
-    @InjectMocks
     private UserGateway userGateway = new UserGatewayInMemoryDb(userRepository);
+
+    @BeforeEach
+    void setUp() {
+        userGateway = new UserGatewayInMemoryDb(userRepository);
+    }
 
     @Test
     public void testFindById() {
-        //Given
-        ElevatorUser mockUser = new ElevatorUser();
+        DbUser mockUser = new DbUser();
         mockUser.setId(12);
-        when(userRepository.findById(1)).thenReturn(Optional.of(mockUser));
+        User user = User.builder().id(12).admin(false).build();
+        when(userRepository.findById(12)).thenReturn(Optional.of(mockUser));
 
-        //When
-        Optional<ElevatorUser> result = userGateway.findById(1);
+        Optional<User> result = userGateway.findById(12);
 
-        //Then
-        assertEquals(Optional.of(mockUser), result);
+        assertTrue(user.equals(result.get()));
     }
 
     @Test
     public void testFindById_notFound() {
-        //Given
         when(userRepository.findById(1)).thenReturn(Optional.empty());
 
-        //When
-        Optional<ElevatorUser> result = userGateway.findById(1);
+        Optional<User> result = userGateway.findById(1);
 
-        //Then
         assertEquals(Optional.empty(), result);
     }
 }

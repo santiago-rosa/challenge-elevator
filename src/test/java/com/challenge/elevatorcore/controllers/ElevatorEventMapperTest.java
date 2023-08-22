@@ -4,13 +4,14 @@ import com.challenge.elevatorcore.dtos.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class CallEventMapperTest {
+class ElevatorEventMapperTest {
 
     private ElevatorEventMapper mapper;
 
@@ -20,7 +21,7 @@ class CallEventMapperTest {
     }
 
     @Test
-    public void testMapCallEventList() {
+    public void mapCallEventList() {
         CallElevatorAction action = CallElevatorAction.builder()
                 .elevatorType("PUBLIC")
                 .fromFloor(5)
@@ -35,7 +36,7 @@ class CallEventMapperTest {
     }
 
     @Test
-    public void testMapSelectFloor() {
+    public void mapSelectFloor() {
         SelectFloorsAction action = SelectFloorsAction.builder()
                 .elevatorType("FREIGHT")
                 .toFloors(Arrays.asList(1, 2))
@@ -50,5 +51,20 @@ class CallEventMapperTest {
         assertEquals(Arrays.asList(1, 2), event.getToFloors());
         assertEquals(1234, event.getAccessKey());
     }
+
+    @Test
+    public void mapToWeightEvent() {
+        WeightChangeAction action = WeightChangeAction.builder()
+                .measure(new BigDecimal(500))
+                .elevatorType("FREIGHT")
+                .build();
+
+        ElevatorWeightEvent event = mapper.mapToWeightEvent(action);
+
+        assertNotNull(event);
+        assertEquals(ElevatorType.FREIGHT, event.getElevatorType());
+        assertEquals(new BigDecimal(500), event.getWeight());
+    }
+
 }
 

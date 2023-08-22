@@ -1,7 +1,4 @@
-INSERT INTO app_user (admin) VALUES ( false);
-INSERT INTO app_user (admin ) VALUES (false);
-INSERT INTO app_user (admin ) VALUES (true);
-INSERT INTO app_user (admin ) VALUES (true);
-INSERT INTO app_user (admin ) VALUES (false);
-INSERT INTO app_user (admin ) VALUES (true);
+INSERT INTO app_user (admin, first_name) VALUES (true, 'Santiago');
+INSERT INTO app_user (admin, first_name) VALUES (false, 'Maria');
+
 

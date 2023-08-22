@@ -32,23 +32,27 @@ public abstract class BaseElevator {
         try {
             updateCurrentPath();
             if (lock.active) {
-                System.out.println(timestamp() + " " + type + " - Elevator is locked because of: " + lock.reason);
+                log(" - Elevator is locked because of: " + lock.reason);
                 return;
             }
             if (currentPath.isEmpty()) {
-                System.out.println(timestamp() + " " + type + " - Elevator is idle on floor " + currentPosition);
+                log(" - Elevator is idle on floor " + currentPosition);
                 return;
             }
             Integer targetFloor = currentPath.stream().findFirst().get();
-            System.out.println(timestamp() + " " + type + " - Elevator moving to floor " + targetFloor);
+            log(" - Elevator moving to floor " + targetFloor);
             work();
-            System.out.println(timestamp() + " " + type + " - Elevator arrived and is waiting on floor " + targetFloor);
+            log(" - Elevator arrived and is waiting on floor " + targetFloor);
             currentPosition = targetFloor;
             currentPath = currentPath.stream().skip(1).toList();
             work();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void log(String message){
+        System.out.println(timestamp() + " " + type + message);
     }
 
     private static void work() throws InterruptedException {
