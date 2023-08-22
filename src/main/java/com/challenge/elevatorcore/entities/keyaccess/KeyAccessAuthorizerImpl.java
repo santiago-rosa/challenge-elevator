@@ -23,7 +23,7 @@ public class KeyAccessAuthorizerImpl implements KeyAccessAuthorizer {
     }
 
     @Override
-    public boolean authorized(ToFloorEvent event) {
+    public Boolean authorized(ToFloorEvent event) {
         if (event.getToFloors().stream().anyMatch(adminAccessFloors::contains)) {
             return userIsAdmin(event);
         }
@@ -38,8 +38,9 @@ public class KeyAccessAuthorizerImpl implements KeyAccessAuthorizer {
                 System.out.println("Access key number " + event.getAccessKey() + " is not authorized");
                 return false;
             }
+            return true;
         }
-        return true;
+        return false;
     }
 
 }

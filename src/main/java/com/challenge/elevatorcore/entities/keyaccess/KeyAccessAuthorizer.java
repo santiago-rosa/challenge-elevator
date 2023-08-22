@@ -4,6 +4,6 @@ import com.challenge.elevatorcore.dtos.ToFloorEvent;
 
 public interface KeyAccessAuthorizer {
 
-    boolean authorized(ToFloorEvent event);
+    Boolean authorized(ToFloorEvent event);
 
 }
