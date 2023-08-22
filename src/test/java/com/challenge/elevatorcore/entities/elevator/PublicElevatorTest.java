@@ -46,7 +46,7 @@ class PublicElevatorTest {
 
     @Test
     void testProcessToFloorAuthorized() {
-        ToFloorEvent event = ToFloorEvent.builder().toFloors(List.of(1, 2, 3, 4)).build();
+        ToFloorsEvent event = ToFloorsEvent.builder().toFloors(List.of(1, 2, 3, 4)).build();
         when(keyAccessAuthorizer.authorized(event)).thenReturn(true);
 
         elevator.processToFloor(event);

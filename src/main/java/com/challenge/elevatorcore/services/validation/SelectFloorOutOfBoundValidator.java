@@ -1,6 +1,6 @@
 package com.challenge.elevatorcore.services.validation;
 
-import com.challenge.elevatorcore.dtos.ToFloorEvent;
+import com.challenge.elevatorcore.dtos.ToFloorsEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +15,7 @@ public class SelectFloorOutOfBoundValidator implements ToFloorEventValidator {
     }
 
     @Override
-    public ValidationResult execute(ToFloorEvent event) {
+    public ValidationResult execute(ToFloorsEvent event) {
         return floorOutOfBoundValidator.validate(event.getToFloors());
     }
 

@@ -46,10 +46,6 @@ class UserControllerTest {
 
     @Test
     public void getUserById() throws Exception {
-        User user = User.builder()
-                .firstName("Santiago")
-                .admin(true)
-                .build();
         mockMvc.perform(get("/api/users/3")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -58,10 +54,6 @@ class UserControllerTest {
 
     @Test
     public void getUserByIdNotFound() throws Exception {
-        User user = User.builder()
-                .firstName("Santiago")
-                .admin(true)
-                .build();
         doThrow(new UserNotFoundException("User not found")).when(userService).getUser(3);
 
         mockMvc.perform(get("/api/users/3")

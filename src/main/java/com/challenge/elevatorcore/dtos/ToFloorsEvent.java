@@ -8,14 +8,12 @@ import java.util.List;
 
 @Getter
 @Builder
-public class SelectFloorsAction {
+public class ToFloorsEvent {
 
-    @NotNull(message = "Elevator type must be provided")
-    private String elevatorType;
+    private Integer accessKey;
     @NotNull(message = "Target floors must be provided")
     private List<Integer> toFloors;
-    @NotNull(message = "Access key must be provided")
-    private Integer accessKey;
+    @NotNull(message = "Elevator type must be provided")
+    private ElevatorType elevatorType;
 
 }
-

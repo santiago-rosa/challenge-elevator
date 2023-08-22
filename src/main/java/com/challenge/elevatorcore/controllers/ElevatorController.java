@@ -3,8 +3,6 @@ package com.challenge.elevatorcore.controllers;
 import com.challenge.elevatorcore.dtos.*;
 import com.challenge.elevatorcore.services.ElevatorService;
 import com.challenge.elevatorcore.services.exceptions.ElevatorServiceException;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,18 +18,16 @@ import java.util.List;
 public class ElevatorController {
 
     private final ElevatorService elevatorService;
-    private final ElevatorEventMapper eventMapper;
 
     @Autowired
-    public ElevatorController(ElevatorService elevatorService, ElevatorEventMapper eventMapper) {
+    public ElevatorController(ElevatorService elevatorService) {
         this.elevatorService = elevatorService;
-        this.eventMapper = eventMapper;
     }
 
     @PostMapping("/calls")
-    public ResponseEntity<String> processActions(@RequestBody @Valid List<CallElevatorAction> actions) {
+    public ResponseEntity<String> processActions(@RequestBody @Valid List<CallEvent> events) {
         try {
-            elevatorService.receiveCalls(eventMapper.mapCallEventList(actions));
+            elevatorService.receiveCalls(events);
         } catch (ElevatorServiceException e) {
             return badRequest(e);
         }
@@ -39,9 +35,9 @@ public class ElevatorController {
     }
 
     @PostMapping("/select_floors")
-    public ResponseEntity<String> processSelectFloors(@RequestBody @Valid SelectFloorsAction action) {
+    public ResponseEntity<String> processSelectFloors(@RequestBody @Valid ToFloorsEvent event) {
         try {
-            elevatorService.goToFloors(eventMapper.mapSelectFloor(action));
+            elevatorService.goToFloors(event);
         } catch (ElevatorServiceException e) {
             return badRequest(e);
         }
@@ -49,8 +45,8 @@ public class ElevatorController {
     }
 
     @PostMapping("/weight")
-    public ResponseEntity<String> updateMeasures(@RequestBody @Valid WeightChangeAction action) {
-        elevatorService.updateWeight(eventMapper.mapToWeightEvent(action));
+    public ResponseEntity<String> updateMeasures(@RequestBody @Valid ElevatorWeightEvent event) {
+        elevatorService.updateWeight(event);
         return ok();
     }
 

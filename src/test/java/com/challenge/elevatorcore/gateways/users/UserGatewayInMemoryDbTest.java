@@ -1,18 +1,16 @@
 package com.challenge.elevatorcore.gateways.users;
 
 import com.challenge.elevatorcore.dtos.User;
-import com.challenge.elevatorcore.entities.elevator.PublicElevator;
 import com.challenge.elevatorcore.entities.keyaccess.users.DbUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 
@@ -38,7 +36,21 @@ class UserGatewayInMemoryDbTest {
 
         Optional<User> result = userGateway.findById(12);
 
-        assertTrue(user.equals(result.get()));
+        assertEquals(user, result.get());
+    }
+
+    @Test
+    public void testAddUser() {
+        DbUser mockUserResponse = new DbUser();
+        mockUserResponse.setId(12);
+        mockUserResponse.setFirstName("Juan");
+        mockUserResponse.setAdmin(true);
+        User user = User.builder().firstName("Juan").admin(false).build();
+        when(userRepository.save(any(DbUser.class))).thenReturn(mockUserResponse);
+
+        User result = userGateway.addUser(user);
+
+        assertEquals(12, (int) result.getId());
     }
 
     @Test

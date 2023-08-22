@@ -34,102 +34,64 @@ class ElevatorControllerTest {
     @MockBean
     private ElevatorService elevatorService;
 
-    @MockBean
-    private ElevatorEventMapper eventMapper;
-
     @Test
     public void postCalls() throws Exception {
 
-        when(eventMapper.mapCallEventList(anyList()))
-                .thenReturn(Collections.singletonList(CallEvent.builder().build()));
-
-        List<CallElevatorAction> actionList = Collections.singletonList(CallElevatorAction.builder()
-                .elevatorType("")
-                .fromFloor(6)
-                .build());
+        List<CallEvent> events = Collections.singletonList(CallEvent.builder().build());
 
         mockMvc.perform(post("/api/elevator/calls")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(actionList)))
+                        .content(new ObjectMapper().writeValueAsString(events)))
                 .andExpect(status().isOk());
 
         verify(elevatorService, times(1)).receiveCalls(anyList());
-        verify(eventMapper, times(1)).mapCallEventList(any());
-
     }
 
     @Test
     public void postCallsException() throws Exception {
 
-        when(eventMapper.mapCallEventList(anyList()))
-                .thenReturn(Collections.singletonList(CallEvent.builder().build()));
-
         doThrow(new ElevatorServiceException("Something went wrong")).when(elevatorService).receiveCalls(anyList());
 
-        List<CallElevatorAction> actionList = Collections.singletonList(CallElevatorAction.builder()
-                .elevatorType("")
-                .fromFloor(6)
-                .build());
+        List<CallEvent> events = Collections.singletonList(CallEvent.builder().build());
 
         mockMvc.perform(post("/api/elevator/calls")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(actionList)))
+                        .content(new ObjectMapper().writeValueAsString(events)))
                 .andExpect(status().isBadRequest());
 
         verify(elevatorService, times(1)).receiveCalls(anyList());
-        verify(eventMapper, times(1)).mapCallEventList(any());
 
     }
 
     @Test
     public void selectFloors() throws Exception {
-        ToFloorEvent event = ToFloorEvent.builder()
-                .build();
-
-        when(eventMapper.mapSelectFloor(any(SelectFloorsAction.class)))
-                .thenReturn(event);
-
-        SelectFloorsAction selectFloorsAction = SelectFloorsAction.builder()
-                .elevatorType("FREIGHT")
-                .toFloors(List.of(45, 67))
-                .accessKey(34)
+        ToFloorsEvent event = ToFloorsEvent.builder()
+                .accessKey(1)
+                .toFloors(List.of(3))
+                .elevatorType(ElevatorType.FREIGHT)
                 .build();
 
         mockMvc.perform(post("/api/elevator/select_floors")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(selectFloorsAction)))
+                        .content(new ObjectMapper().writeValueAsString(event)))
                 .andExpect(status().isOk());
 
-        verify(elevatorService, times(1)).goToFloors(event);
-        verify(eventMapper, times(1)).mapSelectFloor(any(SelectFloorsAction.class));
-
+        verify(elevatorService, times(1)).goToFloors(any(ToFloorsEvent.class));
     }
 
     @Test
     public void weight() throws Exception {
-
-        WeightChangeAction action = WeightChangeAction.builder()
-                .measure(new BigDecimal(500))
-                .elevatorType("FREIGHT")
-                .build();
-
         ElevatorWeightEvent event = ElevatorWeightEvent.builder()
                 .weight(new BigDecimal(500))
                 .elevatorType(ElevatorType.FREIGHT)
                 .build();
 
-        when(eventMapper.mapToWeightEvent(any(WeightChangeAction.class)))
-                .thenReturn(event);
-
-
         mockMvc.perform(post("/api/elevator/weight")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(action)))
+                        .content(new ObjectMapper().writeValueAsString(event)))
                 .andExpect(status().isOk());
 
-        verify(elevatorService, times(1)).updateWeight(event);
-        verify(eventMapper, times(1)).mapToWeightEvent(any(WeightChangeAction.class));
-
+        verify(elevatorService, times(1)).updateWeight(any(ElevatorWeightEvent.class));
     }
 
 }

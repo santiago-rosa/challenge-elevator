@@ -1,9 +1,9 @@
 package com.challenge.elevatorcore.services.validation;
 
-import com.challenge.elevatorcore.dtos.ToFloorEvent;
+import com.challenge.elevatorcore.dtos.ToFloorsEvent;
 
 public interface ToFloorEventValidator {
 
-    ValidationResult execute(ToFloorEvent event);
+    ValidationResult execute(ToFloorsEvent event);
 
 }

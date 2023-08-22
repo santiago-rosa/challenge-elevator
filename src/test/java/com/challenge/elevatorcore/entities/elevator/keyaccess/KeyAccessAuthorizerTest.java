@@ -1,6 +1,6 @@
 package com.challenge.elevatorcore.entities.elevator.keyaccess;
 
-import com.challenge.elevatorcore.dtos.ToFloorEvent;
+import com.challenge.elevatorcore.dtos.ToFloorsEvent;
 import com.challenge.elevatorcore.dtos.User;
 import com.challenge.elevatorcore.entities.keyaccess.KeyAccessAuthorizer;
 import com.challenge.elevatorcore.entities.keyaccess.KeyAccessAuthorizerImpl;
@@ -34,7 +34,7 @@ class KeyAccessAuthorizerTest {
 
     @Test
     void successAuthorization() {
-        ToFloorEvent event = ToFloorEvent.builder()
+        ToFloorsEvent event = ToFloorsEvent.builder()
                 .accessKey(3)
                 .toFloors(List.of(5))
                 .build();
@@ -45,7 +45,7 @@ class KeyAccessAuthorizerTest {
 
     @Test
     void failedAuthorization() {
-        ToFloorEvent event = ToFloorEvent.builder()
+        ToFloorsEvent event = ToFloorsEvent.builder()
                 .accessKey(3)
                 .toFloors(List.of(5))
                 .build();
@@ -56,7 +56,7 @@ class KeyAccessAuthorizerTest {
 
     @Test
     void notNeededAuthorization() {
-        ToFloorEvent event = ToFloorEvent.builder()
+        ToFloorsEvent event = ToFloorsEvent.builder()
                 .accessKey(3)
                 .toFloors(List.of(7))
                 .build();
@@ -67,7 +67,7 @@ class KeyAccessAuthorizerTest {
 
     @Test
     void userNotFound() {
-        ToFloorEvent event = ToFloorEvent.builder()
+        ToFloorsEvent event = ToFloorsEvent.builder()
                 .accessKey(3)
                 .toFloors(List.of(5))
                 .build();

@@ -2,7 +2,7 @@ package com.challenge.elevatorcore.entities.elevator;
 
 import com.challenge.elevatorcore.dtos.CallEvent;
 import com.challenge.elevatorcore.dtos.ElevatorType;
-import com.challenge.elevatorcore.dtos.ToFloorEvent;
+import com.challenge.elevatorcore.dtos.ToFloorsEvent;
 import com.challenge.elevatorcore.entities.keyaccess.KeyAccessAuthorizer;
 import com.challenge.elevatorcore.entities.validation.WeightLimitChecker;
 import com.challenge.elevatorcore.gateways.events.ElevatorEventSourceGateway;
@@ -34,9 +34,11 @@ public class PublicElevator extends BaseElevator implements Elevator {
     }
 
     @Override
-    public void processToFloor(ToFloorEvent event) {
+    public void processToFloor(ToFloorsEvent event) {
         if (keyAccessAuthorizer.authorized(event)) {
             super.processEvents(event.getToFloors());
+        } else{
+            super.log(" User not authorized");
         }
     }
 

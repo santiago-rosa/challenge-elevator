@@ -2,7 +2,7 @@ package com.challenge.elevatorcore.services;
 
 import com.challenge.elevatorcore.dtos.CallEvent;
 import com.challenge.elevatorcore.dtos.ElevatorWeightEvent;
-import com.challenge.elevatorcore.dtos.ToFloorEvent;
+import com.challenge.elevatorcore.dtos.ToFloorsEvent;
 import com.challenge.elevatorcore.entities.elevator.Elevator;
 import com.challenge.elevatorcore.services.exceptions.ElevatorServiceException;
 import com.challenge.elevatorcore.services.validation.ElevatorEventValidator;
@@ -41,7 +41,7 @@ public class ElevatorServiceImpl implements ElevatorService {
     }
 
     @Override
-    public void goToFloors(ToFloorEvent event) {
+    public void goToFloors(ToFloorsEvent event) {
         Optional<ValidationResult> validation = toFloorEventValidators.stream()
                 .map(val -> val.execute(event)).filter(validationResult -> validationResult.error).findFirst();
         if (validation.isEmpty()) {

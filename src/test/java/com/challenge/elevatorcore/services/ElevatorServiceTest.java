@@ -3,7 +3,7 @@ package com.challenge.elevatorcore.services;
 import com.challenge.elevatorcore.dtos.CallEvent;
 import com.challenge.elevatorcore.dtos.ElevatorType;
 import com.challenge.elevatorcore.dtos.ElevatorWeightEvent;
-import com.challenge.elevatorcore.dtos.ToFloorEvent;
+import com.challenge.elevatorcore.dtos.ToFloorsEvent;
 import com.challenge.elevatorcore.entities.elevator.Elevator;
 import com.challenge.elevatorcore.services.validation.ElevatorEventValidator;
 import com.challenge.elevatorcore.services.validation.ToFloorEventValidator;
@@ -59,7 +59,7 @@ class ElevatorServiceTest {
 
     @Test
     void goToFloors() {
-        ToFloorEvent events = ToFloorEvent.builder()
+        ToFloorsEvent events = ToFloorsEvent.builder()
                 .toFloors(List.of(5, 6))
                 .accessKey(33)
                 .elevatorType(ElevatorType.FREIGHT)
@@ -67,7 +67,7 @@ class ElevatorServiceTest {
 
         elevatorService.goToFloors(events);
 
-        verify(elevator, times(1)).processToFloor(any(ToFloorEvent.class));
+        verify(elevator, times(1)).processToFloor(any(ToFloorsEvent.class));
         verify(elevator, times(1)).matches(ElevatorType.FREIGHT);
     }
 

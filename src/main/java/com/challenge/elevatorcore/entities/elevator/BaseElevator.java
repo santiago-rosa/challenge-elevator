@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 public abstract class BaseElevator {
@@ -22,6 +23,7 @@ public abstract class BaseElevator {
     private ElevatorLock lock = new ElevatorLock(false, "");
     private List<Integer> currentPath = Collections.emptyList();
     private final String type;
+    private String lastLog = "";
 
     public BaseElevator(ElevatorEventSourceGateway elevatorEventSource, String type) {
         this.elevatorEventSource = elevatorEventSource;
@@ -32,7 +34,7 @@ public abstract class BaseElevator {
         try {
             updateCurrentPath();
             if (lock.active) {
-                log(" - Elevator is locked because of: " + lock.reason);
+                log(" - Elevator is locked because of " + lock.reason);
                 return;
             }
             if (currentPath.isEmpty()) {
@@ -51,8 +53,11 @@ public abstract class BaseElevator {
         }
     }
 
-    private void log(String message){
-        System.out.println(timestamp() + " " + type + message);
+    protected void log(String message) {
+        if (!Objects.equals(lastLog, message)) {
+            System.out.println(timestamp() + " " + type + message);
+            lastLog = message;
+        }
     }
 
     private static void work() throws InterruptedException {
